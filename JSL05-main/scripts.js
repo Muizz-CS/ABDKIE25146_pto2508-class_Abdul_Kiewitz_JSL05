@@ -1,97 +1,92 @@
 import { initialTasks } from "./initialData.js";
+import { storage } from "./storage.js";
+import { taskManager } from "./taskFunctions.js";
 
-/**
- * Creates a single task DOM element.
- * @param {Object} task - Task data object.
- * @param {string} task.title - Title of the task.
- * @param {number} task.id - Unique task ID.
- * @param {string} task.status - Status column: 'todo', 'doing', or 'done'.
- * @returns {HTMLElement} The created task div element.
- */
+let tasks = [];
+
 function createTaskElement(task) {
   const taskDiv = document.createElement("div");
   taskDiv.className = "task-div";
   taskDiv.textContent = task.title;
   taskDiv.dataset.taskId = task.id;
-
-  taskDiv.addEventListener("click", () => {
-    openTaskModal(task);
-  });
-
+  taskDiv.onclick = () => openTaskModal(task, false);
   return taskDiv;
 }
 
-/**
- * Finds the task container element based on task status.
- * @param {string} status - The task status ('todo', 'doing', or 'done').
- * @returns {HTMLElement|null} The container element, or null if not found.
- */
-function getTaskContainerByStatus(status) {
-  const column = document.querySelector(`.column-div[data-status="${status}"]`);
-  return column ? column.querySelector(".tasks-container") : null;
-}
+function renderTasks() {
+  const containers = {
+    todo: document.querySelector('.column-div[data-status="todo"] .tasks-container'),
+    doing: document.querySelector('.column-div[data-status="doing"] .tasks-container'),
+    done: document.querySelector('.column-div[data-status="done"] .tasks-container')
+  };
 
-/**
- * Clears all existing task-divs from all task containers.
- */
-function clearExistingTasks() {
-  document.querySelectorAll(".tasks-container").forEach((container) => {
-    container.innerHTML = "";
-  });
-}
+  // Clear all containers
+  Object.values(containers).forEach(c => { if(c) c.innerHTML = ""; });
 
-/**
- * Renders all tasks from initial data to the UI.
- * Groups tasks by status and appends them to their respective columns.
- * @param {Array<Object>} tasks - Array of task objects.
- */
-function renderTasks(tasks) {
-  tasks.forEach((task) => {
-    const container = getTaskContainerByStatus(task.status);
+  tasks.forEach(task => {
+    const container = containers[task.status];
     if (container) {
-      const taskElement = createTaskElement(task);
-      container.appendChild(taskElement);
+      container.appendChild(createTaskElement(task));
     }
   });
 }
 
-/**
- * Opens the modal dialog with pre-filled task details.
- * @param {Object} task - The task object to display in the modal.
- */
-function openTaskModal(task) {
+function openTaskModal(task = {}, isNew = true) {
   const modal = document.getElementById("task-modal");
-  const titleInput = document.getElementById("task-title");
-  const descInput = document.getElementById("task-desc");
-  const statusSelect = document.getElementById("task-status");
+  document.getElementById("modal-title-text").textContent = isNew ? "Add New Task" : "Task Details";
+  document.getElementById("create-task-btn").style.display = isNew ? "block" : "none";
 
-  titleInput.value = task.title;
-  descInput.value = task.description;
-  statusSelect.value = task.status;
+  document.getElementById("task-title").value = task.title || "";
+  document.getElementById("task-desc").value = task.description || "";
+  document.getElementById("task-status").value = task.status || "todo";
 
   modal.showModal();
 }
 
-/**
- * Sets up modal close behavior.
- */
-function setupModalCloseHandler() {
-  const modal = document.getElementById("task-modal");
-  const closeBtn = document.getElementById("close-modal-btn");
+function handleFormSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const data = Object.fromEntries(formData.entries());
 
-  closeBtn.addEventListener("click", () => {
-    modal.close();
-  });
+  const newTask = taskManager.createNewTask(data);
+  tasks.push(newTask);
+  
+  storage.saveTasks(tasks);
+  renderTasks();
+  
+  event.target.reset();
+  document.getElementById("task-modal").close();
 }
 
-/**
- * Initializes the task board and modal handlers.
- */
 function initTaskBoard() {
-  clearExistingTasks();
-  renderTasks(initialTasks);
-  setupModalCloseHandler();
+  // 1. Load tasks from storage (or initialData if first time)
+  tasks = storage.getTasks(initialTasks);
+
+  // 2. Add Task Button Wire-up
+  const addBtn = document.getElementById("add-task-btn");
+  if (addBtn) {
+    addBtn.addEventListener("click", () => openTaskModal({}, true));
+  }
+
+  // 3. Modal Close Wire-up
+  const closeBtn = document.getElementById("close-modal-btn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => document.getElementById("task-modal").close());
+  }
+
+  // 4. Form Submit Wire-up
+  const taskForm = document.getElementById("task-form");
+  if (taskForm) {
+    taskForm.addEventListener("submit", handleFormSubmit);
+  }
+
+  // 5. Render the loaded data
+  renderTasks();
 }
 
-// Wait until DOM is fully loaded
-document.addEventListener("DOMContentLoaded", initTaskBoard);
+// Ensure the DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initTaskBoard);
+} else {
+  initTaskBoard();
+}

@@ -1,6 +1,281 @@
 /* ========================
    Global & Root Variables
 ======================== */
+:root {
+  --primary-purple: #635fc7;
+  --primary-purple-hover: #a8a4ff;
+  --black: #000112;
+  --very-dark-grey: #20212c;
+  --dark-grey: #2b2c37;
+  --lines-dark: #3e3f4e;
+  --medium-grey: #828fa3;
+  --lines-light: #e4ebfa;
+  --light-grey: #f4f7fd;
+  --white: #ffffff;
+  --red: #ea5555;
+  --red-hover: #ff9898;
+  
+  --sidebar-width: 300px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  display: flex;
+  background-color: var(--light-grey);
+  color: var(--black);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ========================
+   Layout & Sidebar
+======================== */
+.side-bar {
+  width: var(--sidebar-width);
+  background-color: var(--white);
+  border-right: 1px solid var(--lines-light);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+#side-logo-div {
+  padding: 32px;
+}
+
+.boards-nav-links-div {
+  padding-right: 24px;
+}
+
+#headline-sidepanel {
+  padding: 16px 32px;
+  color: var(--medium-grey);
+  font-size: 12px;
+  letter-spacing: 2.4px;
+}
+
+.board-btn {
+  width: 100%;
+  padding: 14px 32px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-weight: 700;
+  color: var(--medium-grey);
+  border-radius: 0 100px 100px 0;
+  cursor: pointer;
+}
+
+.board-btn:hover {
+  background-color: var(--light-grey);
+  color: var(--primary-purple);
+}
+
+/* ========================
+   Main Content & Header
+======================== */
+#layout {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: 96px;
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--lines-light);
+}
+
+.header-name-div {
+  display: flex;
+  align-items: center;
+}
+
+.logo-mobile {
+  display: none;
+}
+
+/* Buttons */
+.primary-btn {
+  background-color: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-purple-hover);
+}
+
+/* ========================
+   Kanban Board Columns
+======================== */
+.container {
+  padding: 24px;
+  overflow-x: auto;
+  flex-grow: 1;
+}
+
+.card-column-main {
+  display: flex;
+  gap: 24px;
+  height: 100%;
+}
+
+.column-div {
+  min-width: 280px;
+  width: 280px;
+}
+
+.column-head-div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+#todo-dot { background-color: #49abb4; }
+#doing-dot { background-color: #8471f2; }
+#done-dot { background-color: #67e2ae; }
+
+.columnHeader {
+  color: var(--medium-grey);
+  font-size: 12px;
+  letter-spacing: 2.4px;
+}
+
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.task-div {
+  background-color: var(--white);
+  padding: 23px 16px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.1);
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.task-div:hover {
+  color: var(--primary-purple);
+}
+
+/* ========================
+   Modal / Dialog Styling
+======================== */
+dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  margin: auto;
+  background-color: var(--white);
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--medium-grey);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--medium-grey);
+  margin-bottom: 8px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid var(--lines-light);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 1px solid var(--primary-purple);
+}
+
+#create-task-btn {
+  margin-top: 8px;
+}
+
+/* ========================
+   Responsive Transformations
+======================== */
+
+@media (max-width: 768px) {
+  .side-bar {
+    display: none; /* Hide sidebar on mobile */
+  }
+
+  header {
+    padding: 0 16px;
+    height: 64px;
+  }
+
+  .logo-mobile {
+    display: block;
+  }
+
+  .hide-mobile {
+    display: none; /* The "Add New Task" text transforms into just a "+" */
+  }
+
+  .primary-btn {
+    padding: 10px 18px;
+    font-size: 18px;
+  }/* ========================
+   Global & Root Variables
+======================== */
 * {
   box-sizing: border-box; /* Ensures padding and border are included in total element size */
 }
@@ -41,13 +316,15 @@ body {
 }
 
 #side-logo-div {
-  margin: 33px 113px 54px 34px; /* Spacing around logo */
+  margin: 32px 0px 54px 34px; /* Spacing around logo */
   display: flex;
   justify-content: flex-start;
 }
 
 #logo {
-  width: 100%; /* Make logo responsive within container */
+  width: 152px; /* Make logo responsive within container */
+  height: auto;
+  object-fit: contain;
 }
 
 .boards-nav-links-div {
@@ -398,5 +675,16 @@ form select {
 
   .column-div {
     padding: 24px;
+  }
+}
+}
+
+@media (max-width: 480px) {
+  .card-column-main {
+    flex-direction: column; /* Stack columns on very small screens */
+  }
+  
+  .column-div {
+    width: 100%;
   }
 }
